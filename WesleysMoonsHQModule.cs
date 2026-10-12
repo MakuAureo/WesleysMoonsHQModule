@@ -184,6 +184,10 @@ public class WesleysMoonsHQModule : BaseUnityPlugin
         {
             EditCalistScene(scene);
         }
+        if (scene.name == "EndScene")
+        {
+            EditEndScene(scene);
+        }
     }
 
     internal static GameObject GetRootGameObject(Scene scene, string name)
@@ -374,6 +378,31 @@ public class WesleysMoonsHQModule : BaseUnityPlugin
             if (spawner.name != "Spawner") continue;
 
             spawner.randomPool = [nullEnemy];
+        }
+    }
+
+    // END SCENE CHANGES
+    // Remove money farm
+    internal static void EditEndScene(Scene scene)
+    {
+        Logger.LogInfo("Editing End Scene.");
+
+        Transform rootGameObject = GetRootGameObject(scene, "GameObject (3)").transform;
+
+        Transform arena = rootGameObject.Find("Arena");
+
+        List<DelayScript> buttons = [];
+
+        buttons.Add(arena.Find("WallButton (1)").GetComponent<DelayScript>());
+        buttons.Add(arena.Find("WallButton (2)").GetComponent<DelayScript>());
+        buttons.Add(arena.Find("WallButton (3)").GetComponent<DelayScript>());
+        buttons.Add(arena.Find("WallButton (4)").GetComponent<DelayScript>());
+        buttons.Add(arena.Find("WallButton (5)").GetComponent<DelayScript>());
+
+        foreach (DelayScript ds in buttons)
+        {
+            ds.events.RemoveAllListeners();
+            ds.events.m_PersistentCalls.Clear();
         }
     }
 
