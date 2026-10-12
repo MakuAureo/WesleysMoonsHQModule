@@ -12,10 +12,14 @@ namespace WesleysMoonsHQModule.Patches;
 [HarmonyPatch(typeof(StartOfRound))]
 internal class BalancePatches_v1
 {
+    internal static bool Patched = false;
+
     [HarmonyPatch("Start")]
     [HarmonyPostfix]
     internal static void Start_Postfix(StartOfRound __instance)
     {
+        if (Patched) return; // Only patch once.
+
         if (WesleyScripts.LockMoons.Value) // Only apply when moons are locked
         {
             LungProp[] lungProps = Resources.FindObjectsOfTypeAll<LungProp>();
@@ -31,7 +35,7 @@ internal class BalancePatches_v1
 
         foreach (SelectableLevel s in __instance.levels)
         {
-            s.DaySpeedMultiplier = Mathf.Max(s.DaySpeedMultiplier, 1f); // Set day speed multiplier to default on all moons
+            s.DaySpeedMultiplier = Mathf.Max(s.DaySpeedMultiplier, 1f); // Make default daytime speed the minimum.
 
             if (s.name == "CosmocosLevel")
             {
@@ -48,5 +52,7 @@ internal class BalancePatches_v1
                 s.DaySpeedMultiplier = 0.875f; // Re-adjust daytime speed - Cart ride
             }
         }
+
+        Patched = true;
     }
 }
