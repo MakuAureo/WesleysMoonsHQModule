@@ -41,12 +41,8 @@ internal class BalancePatches_v2
                 switch (item.itemName)
                 {
                     case "Assimilated maneater":
-                    case "Assimilated bracken arm":
-                    case "Assimilated jester skull":
-                    case "Assimilated spore lizard leg":
-                    case "Assimilated hoarding bug head":
-                        item.maxValue = 220;
-                        item.minValue = 160;
+                        item.maxValue = 280;
+                        item.minValue = 180;
                         break;
 
                     case "Assimilated concrete torso":
@@ -57,6 +53,10 @@ internal class BalancePatches_v2
                     case "The seed of assimilation":
                         item.maxValue = 580;
                         item.minValue = 500;
+                        break;
+
+                    case "Huge harold":
+                        item.maxValue = 500;
                         break;
                 }
             }
@@ -106,7 +106,8 @@ internal class BalancePatches_v2
 
                 if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ Mode
 
-                s.maxEnemyPowerCount = 11;
+                s.maxEnemyPowerCount = 16;
+                s.Enemies.Add(new SpawnableEnemyWithRarity(Resources.FindObjectsOfTypeAll<ButlerEnemyAI>()[0].enemyType, 56));
             }
 
             // -- HYX --
@@ -114,8 +115,8 @@ internal class BalancePatches_v2
             {
                 if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ Mode
 
-                s.maxScrap = 54;
-                s.minScrap = 42;
+                s.maxScrap = 58;
+                s.minScrap = 48;
                 s.maxOutsideEnemyPowerCount = 14;
                 s.maxEnemyPowerCount = 20;
                 s.spawnProbabilityRange = 3.04f;
@@ -128,9 +129,9 @@ internal class BalancePatches_v2
                     new Keyframe(1.0f, 50.0f, 120f, 120f)
                     ]);
                 s.outsideEnemySpawnChanceThroughDay = AddToKeyFramesOverTime(s.outsideEnemySpawnChanceThroughDay, 2f);
-                s.indoorMapHazards[0].numberToSpawn = AddToKeyFramesOverTime(s.indoorMapHazards[0].numberToSpawn, 20f); // landmines
-                s.indoorMapHazards[1].numberToSpawn = AddToKeyFramesOverTime(s.indoorMapHazards[1].numberToSpawn, 12f); // turrets
-                s.indoorMapHazards[2].numberToSpawn = AddToKeyFramesOverTime(s.indoorMapHazards[2].numberToSpawn, 6f); // spiketraps
+                s.indoorMapHazards[0].numberToSpawn = ZeroOrValueCurve(5, 0.2f); // landmines
+                s.indoorMapHazards[1].numberToSpawn = ZeroOrValueCurve(1, 0.5f); // turrets
+                s.indoorMapHazards[2].numberToSpawn = ZeroOrValueCurve(1, 0.5f); // spiketraps
                 s.randomWeathers[1].weatherVariable = 4; // Eclipsed
             }
 
@@ -138,18 +139,8 @@ internal class BalancePatches_v2
             {
                 if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ mode
 
-                s.maxScrap = 50;
-                s.minScrap = 47;
-                s.factorySizeMultiplier = 1.7f;
-            }
-
-            else if (s.name == "XenphirLevel")
-            {
-                if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ Mode
-
-                s.maxScrap = 56;
-                s.minScrap = 48;
-                s.factorySizeMultiplier = 1.7f;
+                s.maxEnemyPowerCount = 15;
+                s.outsideEnemySpawnChanceThroughDay = AddToKeyFramesOverTime(s.outsideEnemySpawnChanceThroughDay, 3f);
             }
         }
 
@@ -166,6 +157,18 @@ internal class BalancePatches_v2
                 keyFrames[i].value += keyFrames[i].time * value;
             }
         }
+        return new AnimationCurve(keyFrames);
+    }
+
+    internal static AnimationCurve ZeroOrValueCurve(float value, float normalChance)
+    {
+        Keyframe[] keyFrames = new Keyframe[]
+        {
+            new Keyframe(0f, 0f, 0f, float.PositiveInfinity),
+            new Keyframe(1 - normalChance, value, 0f, float.PositiveInfinity),
+            new Keyframe(1f, value, 0f, float.PositiveInfinity),
+        };
+
         return new AnimationCurve(keyFrames);
     }
 }
