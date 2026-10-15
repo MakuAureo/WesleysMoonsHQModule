@@ -29,7 +29,7 @@ internal class ResearcherRoutePatcher
 
             new CodeInstruction(OpCodes.Ldloc_1),
             new CodeInstruction(OpCodes.Ldc_I4_2),
-            new CodeInstruction(OpCodes.Ldc_I4_S, (sbyte)10), // Heap
+            new CodeInstruction(OpCodes.Ldc_I4, 10), // Heap
             new CodeInstruction(OpCodes.Stelem_I4),
 
             new CodeInstruction(OpCodes.Ldloc_1),
@@ -49,32 +49,47 @@ internal class ResearcherRoutePatcher
 
             new CodeInstruction(OpCodes.Ldloc_1),
             new CodeInstruction(OpCodes.Ldc_I4_6),
-            new CodeInstruction(OpCodes.Ldc_I4_S, (sbyte)9), // Xenphir
+            new CodeInstruction(OpCodes.Ldc_I4, 9), // Xenphir
             new CodeInstruction(OpCodes.Stelem_I4),
         };
 
+        foreach (var ci in matcher.Instructions())
+        {
+            WesleysMoonsHQModule.Logger.LogInfo($"{ci.opcode} - {ci.operand}");
+        }
+
         int end = matcher
             .End()
-            .MatchBack(false, 
+            .MatchBack(false,
                 new CodeMatch(
                     OpCodes.Call,
                     AccessTools.PropertyGetter(
                         typeof(WesleysInteriorToolsPlugin),
                         nameof(WesleysInteriorToolsPlugin.CurrentSave)
                     )
-                )
+                ),
+                new CodeMatch(OpCodes.Ldloc_1)
             )
             .Advance(-1)
             .Pos;
-        
+
         int start = matcher.
             Start().
             MatchForward(false, new CodeMatch(OpCodes.Newobj))
             .Pos;
-        
+
+        matcher
+            .Start()
+            .Advance(start)
+            .RemoveInstructionsInRange(start, end)
+            .Insert(initArray);
+
+        foreach (var ci in matcher.Instructions())
+        {
+            WesleysMoonsHQModule.Logger.LogInfo($"{ci.opcode} - {ci.operand}");
+        }
+
         return matcher
-                .RemoveInstructionsInRange(start, end)
-                .Insert(initArray)
-                .InstructionEnumeration();
+            .InstructionEnumeration();
     }
 }
