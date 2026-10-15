@@ -103,7 +103,8 @@ public class WesleysMoonsHQModule : BaseUnityPlugin
                 typeof(BalancePatches_v2),
                 typeof(LLLConfigLoaderPatcher_v2),
                 typeof(WeatherRegistryConfigPatcher_v2),
-                typeof(FabricationDoorOpener)
+                typeof(FabricationDoorOpener),
+                typeof(ResearcherRoutePatcher)
                 ]
             )
     ];
