@@ -107,7 +107,14 @@ internal class BalancePatches_v2
                 if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ Mode
 
                 s.maxEnemyPowerCount = 16;
-                s.Enemies.Add(new SpawnableEnemyWithRarity(Resources.FindObjectsOfTypeAll<ButlerEnemyAI>()[0].enemyType, 56));
+                EnemyType? butlerType = null;
+                foreach (var eType in Resources.FindObjectsOfTypeAll<ButlerEnemyAI>())
+                {
+                    if (eType.name == "ButlerEnemy")
+                        butlerType = eType.enemyType;
+                }
+                if (butlerType != null)
+                    s.Enemies.Add(new SpawnableEnemyWithRarity(butlerType, 56));
             }
 
             // -- HYX --
@@ -129,9 +136,9 @@ internal class BalancePatches_v2
                     new Keyframe(1.0f, 50.0f, 120f, 120f)
                     ]);
                 s.outsideEnemySpawnChanceThroughDay = AddToKeyFramesOverTime(s.outsideEnemySpawnChanceThroughDay, 2f);
-                s.indoorMapHazards[0].numberToSpawn = ZeroOrValueCurve(5, 0.2f); // landmines
-                s.indoorMapHazards[1].numberToSpawn = ZeroOrValueCurve(1, 0.5f); // turrets
-                s.indoorMapHazards[2].numberToSpawn = ZeroOrValueCurve(1, 0.5f); // spiketraps
+                s.indoorMapHazards[0].numberToSpawn = ZeroOrValueCurve(5, 0.2f); // Landmines
+                s.indoorMapHazards[1].numberToSpawn = ZeroOrValueCurve(1, 0.5f); // Turrets
+                s.indoorMapHazards[2].numberToSpawn = ZeroOrValueCurve(1, 0.5f); // Spiketraps
                 s.randomWeathers[1].weatherVariable = 4; // Eclipsed
             }
 
@@ -148,7 +155,7 @@ internal class BalancePatches_v2
                 if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ mode
 
                 s.maxScrap = 35;
-                s.DaytimeEnemies[3].rarity = 1; // Bees
+                s.DaytimeEnemies[2].rarity = 1; // Bees
                 s.DaytimeEnemies[1].rarity = 20; // Locust
             }
 
@@ -159,7 +166,14 @@ internal class BalancePatches_v2
                 s.maxEnemyPowerCount = 20;
                 s.maxOutsideEnemyPowerCount = 8;
                 s.Enemies[10].rarity = 3; // Oilfish
-                s.Enemies.Add(new SpawnableEnemyWithRarity(Resources.FindObjectsOfTypeAll<NutcrackerEnemyAI>()[0].enemyType, 19));
+                EnemyType? nutcrackerType = null;
+                foreach (var eType in Resources.FindObjectsOfTypeAll<NutcrackerEnemyAI>())
+                {
+                    if (eType.name == "NutcrackerEnemy")
+                        nutcrackerType = eType.enemyType;
+                }
+                if (nutcrackerType != null)
+                    s.Enemies.Add(new SpawnableEnemyWithRarity(nutcrackerType, 19));
                 Keyframe[] v73indoor = new Keyframe[]
                 {
                     new Keyframe(0f, -3f, 19.557f, 19.557f, 0f, 0.123f),
