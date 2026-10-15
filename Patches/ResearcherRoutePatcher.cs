@@ -53,11 +53,6 @@ internal class ResearcherRoutePatcher
             new CodeInstruction(OpCodes.Stelem_I4),
         };
 
-        foreach (var ci in matcher.Instructions())
-        {
-            WesleysMoonsHQModule.Logger.LogInfo($"{ci.opcode} - {ci.operand}");
-        }
-
         int end = matcher
             .End()
             .MatchBack(false,
@@ -78,18 +73,11 @@ internal class ResearcherRoutePatcher
             MatchForward(false, new CodeMatch(OpCodes.Newobj))
             .Pos;
 
-        matcher
+        return matcher
             .Start()
             .Advance(start)
             .RemoveInstructionsInRange(start, end)
-            .Insert(initArray);
-
-        foreach (var ci in matcher.Instructions())
-        {
-            WesleysMoonsHQModule.Logger.LogInfo($"{ci.opcode} - {ci.operand}");
-        }
-
-        return matcher
+            .Insert(initArray)
             .InstructionEnumeration();
     }
 }
