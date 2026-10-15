@@ -115,8 +115,8 @@ internal class BalancePatches_v2
             {
                 if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ Mode
 
-                s.maxScrap = 58;
-                s.minScrap = 48;
+                s.maxScrap = 55;
+                s.minScrap = 50;
                 s.maxOutsideEnemyPowerCount = 14;
                 s.maxEnemyPowerCount = 20;
                 s.spawnProbabilityRange = 3.04f;
@@ -141,6 +141,41 @@ internal class BalancePatches_v2
 
                 s.maxEnemyPowerCount = 15;
                 s.outsideEnemySpawnChanceThroughDay = AddToKeyFramesOverTime(s.outsideEnemySpawnChanceThroughDay, 3f);
+            }
+
+            else if (s.name == "SelectorLevel")
+            {
+                if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ mode
+
+                s.maxScrap = 35;
+                s.DaytimeEnemies[3].rarity = 1; // Bees
+                s.DaytimeEnemies[1].rarity = 20; // Locust
+            }
+
+            else if (s.name == "OldredLevel")
+            {
+                if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ mode
+
+                s.maxEnemyPowerCount = 20;
+                s.maxOutsideEnemyPowerCount = 8;
+                s.Enemies[10].rarity = 3; // Oilfish
+                s.Enemies.Add(new SpawnableEnemyWithRarity(Resources.FindObjectsOfTypeAll<NutcrackerEnemyAI>()[0].enemyType, 19));
+                Keyframe[] v73indoor = new Keyframe[]
+                {
+                    new Keyframe(0f, -3f, 19.557f, 19.557f, 0f, 0.123f),
+                    new Keyframe(0.3161f, 5.4704f, 24.4795f, 24.4795f, 0.3961f, 0.3547f),
+                    new Keyframe(0.7594f, 4.973f, 2.6163f, 2.6163f, 0.2901f, 0.5361f),
+                    new Keyframe(1f, 15f, 35.604f, 35.604f, 0.0491f, 0f),
+                };
+                s.enemySpawnChanceThroughoutDay = new AnimationCurve(v73indoor);
+                Keyframe[] v73outdoor = new Keyframe[]
+                {
+                    new Keyframe(0f, -3f, -0.1126f, -0.1126f, 0f, 1f),
+                    new Keyframe(0.1717f, 0.5331f, -8.0549f, -8.0549f, 0.3272f, 0.4063f),
+                    new Keyframe(0.7145f, 3.2309f, 64.2007f, 64.2007f, 0.1701f, 0.0855f),
+                    new Keyframe(1f, 5.3594f, -1.112f, -1.112f, 0.548f, 0.4832f),
+                };
+                s.outsideEnemySpawnChanceThroughDay = new AnimationCurve(v73outdoor);
             }
         }
 
