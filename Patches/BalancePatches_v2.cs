@@ -10,11 +10,12 @@ namespace WesleysMoonsHQModule.Patches;
 /// <summary>
 /// Balancing patches for v81
 /// </summary>
-[HarmonyPatch(typeof(StartOfRound))]
+[HarmonyPatch]
 internal class BalancePatches_v2
 {
     internal static bool Patched = false;
-    [HarmonyPatch("Start")]
+
+    [HarmonyPatch(typeof(StartOfRound), "Start")]
     [HarmonyPostfix]
     internal static void Start_Postfix(StartOfRound __instance)
     {
@@ -40,23 +41,9 @@ internal class BalancePatches_v2
                 // -- HYX -- item value rebalance
                 switch (item.itemName)
                 {
-                    case "Assimilated maneater":
-                        item.maxValue = 280;
-                        item.minValue = 180;
-                        break;
-
-                    case "Assimilated concrete torso":
-                        item.maxValue = 360;
-                        item.minValue = 300;
-                        break;
-
                     case "The seed of assimilation":
                         item.maxValue = 580;
                         item.minValue = 500;
-                        break;
-
-                    case "Huge harold":
-                        item.maxValue = 500;
                         break;
                 }
             }
@@ -72,11 +59,8 @@ internal class BalancePatches_v2
                     {
                         switch (nouns[j].result.name)
                         {
-                            case "XenphirRoute":
-                                nouns[j].result.itemCost = 2500;
-                                break;
                             case "HyxRoute":
-                                nouns[j].result.itemCost = 4000;
+                                nouns[j].result.itemCost = 3500;
                                 break;
                             case "CarnateRoute":
                                 nouns[j].result.itemCost = 2200;
@@ -122,8 +106,8 @@ internal class BalancePatches_v2
             {
                 if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ Mode
 
-                s.maxScrap = 55;
-                s.minScrap = 50;
+                s.maxScrap = 60;
+                s.minScrap = 55;
                 s.maxOutsideEnemyPowerCount = 14;
                 s.maxEnemyPowerCount = 20;
                 s.spawnProbabilityRange = 3.04f;
@@ -146,8 +130,13 @@ internal class BalancePatches_v2
             {
                 if (!WesleyScripts.LockMoons.Value) continue; // patch only in HQ mode
 
-                s.maxEnemyPowerCount = 15;
-                s.outsideEnemySpawnChanceThroughDay = AddToKeyFramesOverTime(s.outsideEnemySpawnChanceThroughDay, 3f);
+                s.maxEnemyPowerCount = 16;
+                s.Enemies[7].rarity = 9; // Lootbug
+                s.enemySpawnChanceThroughoutDay.keys[1].time -= 0.1f;
+                s.enemySpawnChanceThroughoutDay.keys[1].value += 1f;
+                s.enemySpawnChanceThroughoutDay.keys[2].value += 3f;
+                s.outsideEnemySpawnChanceThroughDay.keys[1].time -= 0.3f;
+                s.outsideEnemySpawnChanceThroughDay.keys[2].value = 15f;
             }
 
             else if (s.name == "SelectorLevel")
@@ -219,5 +208,17 @@ internal class BalancePatches_v2
         };
 
         return new AnimationCurve(keyFrames);
+    }
+
+    [HarmonyPatch(typeof(RoundManager), nameof(RoundManager.SpawnScrapInLevel))]
+    [HarmonyAfter("mrov.WeatherRegistry")]
+    [HarmonyPrefix]
+    [HarmonyPriority(Priority.First)]
+    internal static void SpawnScrap_Pre(RoundManager __instance)
+    {
+        if (!WesleyScripts.LockMoons.Value || __instance.currentLevel.name != "CarnateLevel")
+            return;
+
+        RoundManager.Instance.scrapValueMultiplier *= 1.88f;
     }
 }

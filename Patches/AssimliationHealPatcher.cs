@@ -11,9 +11,14 @@ internal class AssimilationHealPatcher
     internal static void UseStim_Post(StimItem __instance)
     {
         AssimilatedGrowth superCavader = UnityEngine.Object.FindAnyObjectByType<AssimilatedGrowth>();
-        if (!__instance.HealthStim || superCavader == null)
+        int playerClientId = (int)GameNetworkManager.Instance.localPlayerController.playerClientId;
+        if (!__instance.HealthStim ||
+            superCavader == null ||
+            !superCavader.playerInfections[playerClientId].infected ||
+            superCavader.playerInfections[playerClientId].infectionMeter >= 1f
+        )
             return;
 
-        superCavader.HealInfection((int)GameNetworkManager.Instance.localPlayerController.playerClientId, 0.6f);
+        superCavader.HealInfection(playerClientId, 0.5f);
     }
 }
